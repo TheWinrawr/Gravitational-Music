@@ -1,8 +1,8 @@
 var canvas = $("#canvas")[0];
 var context = canvas.getContext("2d");
 
-var width = 1200;
-var height = 800;
+var width = $(document).width()/1.5;
+var height = $(document).height()/1.2;
 canvas.width = width;
 canvas.height = height;
 
@@ -16,6 +16,12 @@ var interval = 0;
 
 var nodeList = [];
 
+var drawEdges = true
+
+if( !(navigator.userAgent.toLowerCase().indexOf('chrome') > -1 )){ //not chrome
+	drawEdges = false
+}
+
 function init() {
 	var colors = [];
 	var colorOffset = Math.random() * numSamples/2;
@@ -28,6 +34,8 @@ function init() {
 
 		nodeList[i] = new Node(Math.random()*width, Math.random()*height, color);
 	}
+
+	context.font = "24px Arial"
 }
 
 function tick() {
@@ -42,8 +50,6 @@ function draw() {
 
 	context.fillStyle = "rgba(210, 210, 210, 0.5)";
 	context.fillRect(0, 0, width, height);
-
-	var greatest = 0;
 
 	/*Update radius and mass of each node based on audio data*/
 	for(var i = 0; i < nodeList.length; i++) {
@@ -64,7 +70,6 @@ function draw() {
 
 			var force = g * (node.mass * other.mass) / (distance * distance);
 			if(force > maxForce) force = maxForce;
-			greatest = (force > greatest ? force : greatest);
 			var forceVec = {x: force * direction.x, y: force * direction.y};
 
 			//f = ma
@@ -97,7 +102,10 @@ function draw() {
 		}
 		node.draw();
 	}
-	console.log(greatest);
+
+	context.fillStyle = "black"
+	context.fillText(song.songName + " - " + song.author, 10, height-10)
+
 }
 
 function Node(x, y, color) {
@@ -133,12 +141,14 @@ function Node(x, y, color) {
 		grad.addColorStop(0, nodeColor);
 		grad.addColorStop(1, otherColor);
 
-		context.strokeStyle = grad;
-		context.beginPath();
-		context.moveTo(this.x, this.y);
-		context.lineTo(other.x, other.y);
-		context.lineWidth = 2;
-		context.stroke();
+		if(drawEdges) {
+			context.strokeStyle = grad;
+			context.beginPath();
+			context.moveTo(this.x, this.y);
+			context.lineTo(other.x, other.y);
+			context.lineWidth = 2;
+			context.stroke();
+		}
 
 	}
 

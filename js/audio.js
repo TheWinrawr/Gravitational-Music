@@ -11,6 +11,11 @@ var jsNode;
 var numSamples = 128;
 
 var frequencyData = [];
+var song = {
+	fileName: "Assets/Undertale OST_ 071 - Undertale.mp3",
+	songName: "Undertale",
+	author: "Toby Fox"
+}
 
 setupAudioNodes();
 loadFile();
@@ -20,7 +25,7 @@ loadFile();
  */
 function loadFile() {
 	var req = new XMLHttpRequest();
-	req.open("GET", "Assets/Undertale OST_ 071 - Undertale.mp3", true);
+	req.open("GET", song.fileName, true);
 	req.responseType = "arraybuffer";
 	req.onload = function() {
 		audioCtx.decodeAudioData(req.response, function(buffer) {
